@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}{% endblock %}
+
+
+{% block main %}
+    <form action="{{ url_for("posts.edit_tag",tag_id=tag_id) }}" method="post">
+
+        <p>Name</p>
+        {{ form.name }}
+
+        <button type="submit">Save</button>
+    </form>
+    {% if not errors %}
+        <p>all ok</p>
+    {% endif %}
+
+    {% for error in errors %}
+        <p>{{ error }}</p>
+    {% endfor %}
+
+{% endblock %}

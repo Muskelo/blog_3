@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}{% endblock %}
+
+
+{% block main %}
+
+    <h1>{{ post.title }}</h1>
+    <p>{{ post.text }}</p>
+    <ul>
+        {% for tag in post.tags %}
+            <li>
+                <a href="{{ url_for("list_items",item="post",tag=tag.name) }}">{{ tag.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    {% for image in images %}
+        <img src="{{ "/"+image.address }}" alt="{{ image.id }}">
+    {% endfor %}
+
+{% endblock %}
