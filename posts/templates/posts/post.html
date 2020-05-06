@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% block title %}{% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for("posts.static",filename = "posts/post.css") }}">
+{% endblock %}
 
 
 {% block main %}
@@ -17,5 +20,15 @@
     {% for image in images %}
         <img src="{{ "/"+image.address }}" alt="{{ image.id }}">
     {% endfor %}
+
+    {% if current_user.is_authenticated %}
+        <form action="{{ url_for("posts.read_post",post_id = post.id) }}" method="post">
+
+            {{ form.title }}
+            {{ form.text }}
+
+            <button type="submit">Comment</button>
+        </form>
+    {% endif %}
 
 {% endblock %}

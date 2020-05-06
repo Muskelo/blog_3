@@ -3,8 +3,8 @@ from flask_login import current_user
 from flask_security import login_required
 
 from db import db
-from models import Tag, Post, Image
-from posts.forms import CreatePostForm, CreateTagForm, SelectMultipleField
+from models import Tag, Post, Image, Comment
+from posts.forms import CreatePostForm, CreateTagForm, CreateCommentForm, SelectMultipleField
 from posts.utils import save_image, delete_image
 
 posts = Blueprint('posts', __name__,
@@ -250,7 +250,10 @@ def delete_tag(tag_id):
     #  search
     tag = Tag.query.filter(Tag.id == tag_id).first()
 
+    # access
     if tag and (current_user.has_role("moder")):
+
+        # COMMIT
 
         if not errors:
             db.session.delete(tag)
@@ -261,18 +264,44 @@ def delete_tag(tag_id):
     return "something went wrong"
 
 
-@posts.route('/<post_id>/')
+@posts.route('/<post_id>/', methods=["GET", "POST"])
 def read_post(post_id):
+    errors = []
     # search post
     post = Post.query.filter(Post.id == int(post_id)).first()
 
     if not post:
         abort(404)
 
+    # create form
+    form = CreateCommentForm()
+
+    if request.method == "POST":
+        # ADD COMMENT
+
+        comment = Comment()
+        comment.title = form.title.data
+        comment.text = form.text.data
+        comment.author = current_user
+        comment.post_parent = post
+
+        if not errors:
+            db.session.add(comment)
+            db.session.commit()
+            # to refresh flask form
+            return redirect(url_for("posts.read_post", post_id=post_id))
+
+    # get comments
+    comments = Comment.query.filter(Comment.post_id == post_id)
+
+    # get images
     images = Image.query.filter(Image.post_id == post_id).all()
 
     return render_template("posts/post.html",
+                           errors=errors,
                            post=post,
+                           form=form,
                            current_user=current_user,
-                           images=images
+                           images=images,
+                           comments=comments
                            )
