@@ -292,7 +292,10 @@ def read_post(post_id):
             return redirect(url_for("posts.read_post", post_id=post_id))
 
     # get comments
-    comments = Comment.query.filter(Comment.post_id == post_id)
+    comments = (Comment.query
+                .filter(Comment.post_id == post_id)
+                .order_by(Comment.created.desc())
+                )
 
     # get images
     images = Image.query.filter(Image.post_id == post_id).all()
