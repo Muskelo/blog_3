@@ -19,6 +19,7 @@ class Post(db.Model):
     created = db.Column(db.DateTime, default=datetime.now)
     tags = db.relationship("Tag", secondary=post_tag, backref=db.backref('Post', lazy="dynamic"))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    comments = db.relationship("Comment", backref="post_parent")
     images = db.relationship("Image", backref="post_parent")
 
     def __init__(self, *args, **kwargs):
@@ -59,6 +60,7 @@ class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(140))
     text = db.Column(db.Text)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 
