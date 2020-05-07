@@ -259,9 +259,9 @@ def delete_tag(tag_id):
             db.session.delete(tag)
             db.session.commit()
 
-            return "tag deleted"
+            return redirect(request.referrer)
 
-    return "something went wrong"
+    return render_template("wrong.html", request=request)
 
 
 @posts.route('/<post_id>/', methods=["GET", "POST"])
