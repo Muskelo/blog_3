@@ -264,6 +264,38 @@ def delete_tag(tag_id):
     return render_template("wrong.html", request=request)
 
 
+@posts.route('delete_comment/<comment_id>/', methods=["GET", 'POST'])
+@login_required
+def delete_comment(comment_id):
+    errors = []
+
+    # search
+    comment = Comment.query.filter(Comment.id == comment_id).first()
+
+    # VALIDATE
+
+    if not comment:
+        errors.append("Don't find")
+
+    # access
+    elif not (current_user == comment.author
+              or current_user.has_role("moder")):
+
+        errors.append("Not access")
+
+    # COMMIT
+
+    if not errors:
+        db.session.delete(comment)
+        db.session.commit()
+
+        if request.method == "GET":
+            return "deleted"
+        return redirect(request.referrer)
+
+    return render_template("wrong.html", request=request, errors=errors)
+
+
 @posts.route('/<post_id>/', methods=["GET", "POST"])
 def read_post(post_id):
     errors = []
