@@ -1,11 +1,14 @@
 {% extends "base.html" %}
 {% block title %}{% endblock %}
+
 {% block head %}
     <link rel="stylesheet" href="{{ url_for("posts.static",filename = "posts/post.css") }}">
 {% endblock %}
 
 
 {% block main %}
+
+    <!-- POST -------------------------------------------------------------------------------------------------------->
 
     <h1>{{ post.title }}</h1>
     <p>{{ post.text }}</p>
@@ -21,6 +24,11 @@
         <img src="{{ "/"+image.address }}" alt="{{ image.id }}">
     {% endfor %}
 
+
+    <!-- COMMENTS ---------------------------------------------------------------------------------------------------->
+
+    {#  Comment form   #}
+
     {% if current_user.is_authenticated %}
         <form action="{{ url_for("posts.read_post",post_id = post.id) }}" method="post">
 
@@ -31,15 +39,29 @@
         </form>
     {% endif %}
 
+    {#  Comments #}
+
     <ul>
+
         {% for comment in comments %}
             <li>
+                {#  Comment #}
+
                 <h3>{{ comment.author.email }}</h3>
                 <h4>{{ comment.title }}</h4>
                 <p>{{ comment.text }}</p>
                 <p>{{ comment.created }}</p>
+
+                {# button delete for author and moderator #}
+                {% if current_user == comment.author or current_user.has_role("moder") %}
+                    <form action="{{ url_for("posts.delete_comment",comment_id = comment.id) }}">
+                        <button type="submit"></button>
+                    </form>
+                {% endif %}
+
             </li>
         {% endfor %}
+
     </ul>
 
 {% endblock %}
