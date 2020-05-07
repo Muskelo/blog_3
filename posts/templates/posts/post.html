@@ -30,7 +30,7 @@
     {#  Comment form   #}
 
     {% if current_user.is_authenticated %}
-        <form action="{{ url_for("posts.read_post",post_id = post.id) }}" method="post">
+        <form action="{{ url_for("posts.read_post",post_id = post.id,edit=edit) }}" method="post">
 
             {{ form.title }}
             {{ form.text }}
@@ -52,12 +52,18 @@
                 <p>{{ comment.text }}</p>
                 <p>{{ comment.created }}</p>
 
-                {# button delete for author and moderator #}
+                {# button delete and edit for author and moderator #}
                 {% if current_user == comment.author or current_user.has_role("moder") %}
 
                     <form action="{{ url_for("posts.delete_comment",comment_id = comment.id)}}" method="post">
                         <button type="submit">Delete</button>
                     </form>
+
+
+                    <a href="{{ url_for("posts.read_post",post_id = comment.post_parent.id,edit = comment.id) }}">
+                        <button type="submit">Edit</button>
+                    </a>
+
 
                 {% endif %}
 

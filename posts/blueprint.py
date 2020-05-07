@@ -299,6 +299,7 @@ def delete_comment(comment_id):
 @posts.route('/<post_id>/', methods=["GET", "POST"])
 def read_post(post_id):
     errors = []
+
     # search post
     post = Post.query.filter(Post.id == int(post_id)).first()
 
@@ -308,28 +309,60 @@ def read_post(post_id):
     # create form
     form = CreateCommentForm()
 
-    if request.method == "POST":
-        # ADD COMMENT
+    # EDIT COMMENT part 1
 
-        comment = Comment()
+    edit = request.args.get("edit")
+
+    if edit:  # edit comment
+        comment = Comment.query.filter(Comment.id == edit).first()
+
+        # validator
+
+        if not comment:
+            errors.append("Don't find comment for edit")
+
+        elif not (current_user == comment.author
+                  or current_user.has_role("moder")):
+
+            errors.append("not access")
+
+    # ADD COMMENT
+
+    if request.method == "POST":
+
+        # create comment
+        if not edit:
+            comment = Comment()
+
         comment.title = form.title.data
         comment.text = form.text.data
         comment.author = current_user
         comment.post_parent = post
 
         if not errors:
-            db.session.add(comment)
+            if not edit:  # when edit don't necessary add
+                db.session.add(comment)
             db.session.commit()
-            # to refresh flask form
             return redirect(url_for("posts.read_post", post_id=post_id))
 
-    # get comments
+    # EDIT COMMENT part 2
+    # I split  it because in ADD COMMENT use object from part 1,
+    # but in part 2 edit object from ADD COMMENT
+    if edit:
+        # create
+
+        if not errors:
+            form.title.data = comment.title
+            form.text.data = comment.text
+
+    # GET COMMENTS FROM DB
+
     comments = (Comment.query
                 .filter(Comment.post_id == post_id)
                 .order_by(Comment.created.desc())
                 )
 
-    # get images
+    # GET IMAGES
     images = Image.query.filter(Image.post_id == post_id).all()
 
     return render_template("posts/post.html",
@@ -338,5 +371,6 @@ def read_post(post_id):
                            form=form,
                            current_user=current_user,
                            images=images,
-                           comments=comments
+                           comments=comments,
+                           edit=edit
                            )
