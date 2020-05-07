@@ -3,8 +3,8 @@ from flask_login import current_user
 from flask_security import login_required
 
 from db import db
-from models import Tag, Post, Image
-from posts.forms import CreatePostForm, CreateTagForm, SelectMultipleField
+from models import Tag, Post, Image, Comment
+from posts.forms import CreatePostForm, CreateTagForm, CreateCommentForm, SelectMultipleField
 from posts.utils import save_image, delete_image
 
 posts = Blueprint('posts', __name__,
@@ -250,29 +250,127 @@ def delete_tag(tag_id):
     #  search
     tag = Tag.query.filter(Tag.id == tag_id).first()
 
+    # access
     if tag and (current_user.has_role("moder")):
+
+        # COMMIT
 
         if not errors:
             db.session.delete(tag)
             db.session.commit()
 
-            return "tag deleted"
+            return redirect(request.referrer)
 
-    return "something went wrong"
+    return render_template("wrong.html", request=request)
 
 
-@posts.route('/<post_id>/')
+@posts.route('delete_comment/<comment_id>/', methods=["GET", 'POST'])
+@login_required
+def delete_comment(comment_id):
+    errors = []
+
+    # search
+    comment = Comment.query.filter(Comment.id == comment_id).first()
+
+    # VALIDATE
+
+    if not comment:
+        errors.append("Don't find")
+
+    # access
+    elif not (current_user == comment.author
+              or current_user.has_role("moder")):
+
+        errors.append("Not access")
+
+    # COMMIT
+
+    if not errors:
+        db.session.delete(comment)
+        db.session.commit()
+
+        if request.method == "GET":
+            return "deleted"
+        return redirect(request.referrer)
+
+    return render_template("wrong.html", request=request, errors=errors)
+
+
+@posts.route('/<post_id>/', methods=["GET", "POST"])
 def read_post(post_id):
+    errors = []
+
     # search post
     post = Post.query.filter(Post.id == int(post_id)).first()
 
     if not post:
         abort(404)
 
+    # create form
+    form = CreateCommentForm()
+
+    # EDIT COMMENT part 1
+
+    edit = request.args.get("edit")
+
+    if edit:  # edit comment
+        comment = Comment.query.filter(Comment.id == edit).first()
+
+        # validator
+
+        if not comment:
+            errors.append("Don't find comment for edit")
+
+        elif not (current_user == comment.author
+                  or current_user.has_role("moder")):
+
+            errors.append("not access")
+
+    # ADD COMMENT
+
+    if request.method == "POST":
+
+        # create comment
+        if not edit:
+            comment = Comment()
+
+        comment.title = form.title.data
+        comment.text = form.text.data
+        comment.author = current_user
+        comment.post_parent = post
+
+        if not errors:
+            if not edit:  # when edit don't necessary add
+                db.session.add(comment)
+            db.session.commit()
+            return redirect(url_for("posts.read_post", post_id=post_id))
+
+    # EDIT COMMENT part 2
+    # I split  it because in ADD COMMENT use object from part 1,
+    # but in part 2 edit object from ADD COMMENT
+    if edit:
+        # create
+
+        if not errors:
+            form.title.data = comment.title
+            form.text.data = comment.text
+
+    # GET COMMENTS FROM DB
+
+    comments = (Comment.query
+                .filter(Comment.post_id == post_id)
+                .order_by(Comment.created.desc())
+                )
+
+    # GET IMAGES
     images = Image.query.filter(Image.post_id == post_id).all()
 
     return render_template("posts/post.html",
+                           errors=errors,
                            post=post,
+                           form=form,
                            current_user=current_user,
-                           images=images
+                           images=images,
+                           comments=comments,
+                           edit=edit
                            )

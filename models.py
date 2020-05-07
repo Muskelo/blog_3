@@ -19,6 +19,7 @@ class Post(db.Model):
     created = db.Column(db.DateTime, default=datetime.now)
     tags = db.relationship("Tag", secondary=post_tag, backref=db.backref('Post', lazy="dynamic"))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    comments = db.relationship("Comment", backref="post_parent")
     images = db.relationship("Image", backref="post_parent")
 
     def __init__(self, *args, **kwargs):
@@ -53,6 +54,17 @@ class Image(db.Model):
         return self.id + "_" + self.post_id
 
 
+class Comment(db.Model):
+    __tablename__ = "comment"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    title = db.Column(db.String(140))
+    text = db.Column(db.Text)
+    created = db.Column(db.DateTime, default=datetime.now)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+
 #  Flask-security
 roles_users = db.Table('roles_users',
                        db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
@@ -72,6 +84,6 @@ class User(db.Model, UserMixin):
     active = db.Column(db.Boolean())
     confirmed_at = db.Column(db.DateTime())
     posts = db.relationship("Post", backref="author")
+    comments = db.relationship("Comment", backref="author")
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
-
