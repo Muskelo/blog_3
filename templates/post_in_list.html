@@ -5,7 +5,8 @@
     <a href="#">{{ item.author.email }}</a>
 </div>
 
-{% if current_user==item.author or current_user.has_role("moder") %}
+<div class="pages__item-form">
+    {% if current_user==item.author or current_user.has_role("moder") %}
     <form action="{{ url_for("posts.edit_post", post_id=item.id) }}">
         <button>Edit post</button>
     </form>
@@ -14,6 +15,7 @@
         <button type="submit">delete post</button>
     </form>
 {% endif %}
+</div>
 
 <div class="pages__item_data">
     {{ item.created }}
