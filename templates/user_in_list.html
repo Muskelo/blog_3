@@ -1,8 +1,8 @@
 <div class="pages__item-email">
-    {{ item.email }}
+    <a href="{{ url_for("auth.read_user",user_id=item.id) }}">{{ item.email }}</a>
 </div>
 
 {% for role in item.roles %}
-    {{ role.name }}
+    <a href="{{ url_for("list_items",item="user",roles=role.name) }}">{{ role.name }}</a>
 {% endfor %}
 <p></p>
