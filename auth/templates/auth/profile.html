@@ -17,9 +17,25 @@
 
     </ul>
 
-    <form action="{{ url_for("auth.read_user",user_id=user.id ) }}" method="post">
-        {{ form.roles }}
-        <button type="submit"></button>
-    </form>
+    {% if current_user.has_role("admin") %}
+        <form action="{{ url_for("auth.read_user",user_id=user.id ) }}" method="post">
+            {{ form.roles }}
+            <button type="submit">Save</button>
+        </form>
+    {% endif %}
+
+    {% if current_user.has_role("moder") %}
+        <form action="{{ url_for("auth.ban_user",user_id=user.id ) }}" method="post">
+            <button type="submit">
+
+                {%  if user.active == 1 %}
+                    Ban
+                {% else %}
+                    Unban
+                {% endif %}
+
+            </button>
+        </form>
+    {% endif %}
 
 {% endblock %}
