@@ -1,4 +1,5 @@
 from flask import request, url_for
+from flask_security import current_user
 
 
 def get_num_near_pages(page, all_pages, max_way_to_neighbor):
@@ -29,3 +30,20 @@ def redirect_url(default='index'):
     return request.args.get('next') or \
            request.referrer or \
            url_for(default)
+
+
+def access(roles: list = [], author=None):
+    """Access
+
+    :param roles:
+    :param author: if need check author
+    :return:true if one among there true
+    """
+    if author and author == current_user:
+        return True
+
+    for role in roles:
+        if current_user.has_role(role):
+            return True
+
+    return False

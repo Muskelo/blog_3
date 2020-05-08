@@ -24,6 +24,8 @@ def read_user(user_id):
 
     form = SelectRoleForm()
 
+    #  EDIT ROLES
+
     if request.method == "POST":
         user.roles = []
 
@@ -41,7 +43,7 @@ def read_user(user_id):
         if not errors:
             db.session.commit()
 
-    # put role in form
+    # PUT ROLE IN FORM
 
     form.roles.data = []
 
