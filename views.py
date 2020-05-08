@@ -2,8 +2,8 @@ from flask import request, render_template
 from flask_login import current_user
 
 from app import app
-from get_list import get_post_list, get_tag_list
-from models import Post, Tag
+from get_list import get_post_list, get_tag_list,get_user_list
+from models import Post, Tag,User
 from utils import get_num_near_pages,redirect_url
 
 
@@ -14,7 +14,8 @@ def index():
 
 items = {
     "post": [Post, "post_in_list.html", get_post_list, "Posts"],
-    "tag": [Tag, "tag_in_list.html", get_tag_list, "Tags"]
+    "tag": [Tag, "tag_in_list.html", get_tag_list, "Tags"],
+    "user": [User, "user_in_list.html", get_user_list, "Tags"]
 }
 
 
