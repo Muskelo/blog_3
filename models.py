@@ -85,5 +85,5 @@ class User(db.Model, UserMixin):
     confirmed_at = db.Column(db.DateTime())
     posts = db.relationship("Post", backref="author")
     comments = db.relationship("Comment", backref="author")
-    roles = db.relationship('Role', secondary=roles_users, cascade="all,delete",
+    roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
