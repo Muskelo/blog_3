@@ -17,15 +17,15 @@
 
 
 
-            {% if not current_user.is_authenticated %}
+            {% if not access(auth=True) %}
 
                 <li><a href="{{ url_for("security.login") }}">LOGIN</a></li>
                 <li><a href="{{ url_for("security.register") }}">REGISTRATION</a></li>
             {% endif %}
 
-            {% if current_user.is_authenticated %}
+            {% if access(auth=True) %}
                 <li><a href="{{ url_for("list_items",item = "post",author = current_user.email) }}">MY POST</a></li>
-                <li><a href="{{ url_for("posts.create_posts") }}">CREATE POST </a></li>
+                <li><a href="{{ url_for("create_item",item_type="post") }}">CREATE POST </a></li>
                 <li><a href="{{ url_for("security.logout") }}">LOGOUT</a></li>
             {% endif %}
         </ul>

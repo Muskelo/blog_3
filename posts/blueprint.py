@@ -14,60 +14,7 @@ posts = Blueprint('posts', __name__,
                   )
 
 
-@posts.route('create_post/', methods=['GET', 'POST'])
-@login_required
-def create_posts():
-    errors = []
 
-    # CREATE FORM
-
-    # to auto-refresh after adding new teg
-    CreatePostForm.tagsChoice = [(str(tag.id), tag.name) for tag in Tag.query.all()]
-    CreatePostForm.tags = SelectMultipleField(u"Tags", choices=CreatePostForm.tagsChoice)
-
-    form = CreatePostForm()
-
-    if request.method == "POST":
-
-        # VALIDATOR
-
-        a = Post.query.filter(Post.title == form.title.data).first()
-        if a is not None:
-            errors.append("Post with that title already added")
-
-        # CREATE NEW POST
-
-        new_post = Post()
-        new_post.title = form.title.data
-        new_post.text = form.text.data
-        new_post.author = current_user
-
-        for tag in form.tags.data:
-            new_post.tags.append(Tag.query.filter(Tag.id == tag).first())
-
-        if not errors:
-            # FLASH(to get post's id)
-
-            db.session.add(new_post)
-            db.session.flush()
-
-            # SAVE IMAGES
-
-            errors = save_image(form, new_post, errors)
-
-        # COMMIT
-
-        if not errors:
-            db.session.commit()
-            return redirect(url_for("posts.create_posts"))
-        else:
-            db.session.rollback()
-
-    return render_template("posts/create_post.html",
-                           form=form,
-                           current_user=current_user,
-                           errors=errors
-                           )
 
 
 @posts.route('create_tag/', methods=['GET', 'POST'])
