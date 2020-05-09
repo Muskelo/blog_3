@@ -14,43 +14,6 @@ posts = Blueprint('posts', __name__,
                   )
 
 
-
-
-
-@posts.route('create_tag/', methods=['GET', 'POST'])
-@login_required
-def create_tag():
-    errors = []
-
-    # CREATE FORM
-
-    form = CreateTagForm()
-
-    if request.method == "POST":
-        # CREATE NEW TAG
-        new_tag = Tag()
-        new_tag.name = form.name.data
-
-        # VALIDATOR
-
-        if Tag.query.filter(Tag.name == new_tag.name).first():
-            errors.append("this tag already added")
-
-        # COMMIT
-
-        if not errors:
-            db.session.add(new_tag)
-            db.session.commit()
-
-            return redirect(url_for("posts.create_tag"))
-
-    return render_template("posts/create_tag.html",
-                           form=form,
-                           current_user=current_user,
-                           errors=errors
-                           )
-
-
 @posts.route('edit_post/<post_id>/', methods=['GET', 'POST'])
 @login_required
 def edit_post(post_id):
@@ -225,7 +188,7 @@ def read_post(post_id):
                            errors=errors,
                            post=post,
                            form=form,
-                           current_user=current_user,
+                           access=access,
                            images=images,
                            comments=comments,
                            edit=edit
