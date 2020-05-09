@@ -1,19 +1,18 @@
-from flask import request, render_template, redirect
+from flask import request, render_template, redirect, url_for
 from flask_login import current_user
 from flask_security import login_required
 
 from app import app
-
 from auth.delete import delete_role_by_id, delete_user_by_id
+from auth.get_list import get_user_list
+from posts.create import create_post,create_tag
 from posts.delete import delete_comment_by_id, \
     delete_image_by_id, \
     delete_post_by_id, \
     delete_tag_by_id
-
-from auth.get_list import get_user_list
+from posts.forms import create_post_form,create_tag_form
 from posts.get_list import get_post_list, get_tag_list
-
-from utils import get_num_near_pages,access
+from utils import get_num_near_pages, access
 
 
 @app.route('/')
@@ -21,19 +20,22 @@ def index():
     return render_template("index.html", current_user=current_user)
 
 
+#  LIST
+
+
 items_list = {
     "post": {
-        "model_name": "Posts",
+        "items_name": "Posts",
         "template": "posts/post_in_list.html",
         "get_list": get_post_list
     },
     "tag": {
-        "model_name": "Tags",
+        "items_name": "Tags",
         "template": "posts/tag_in_list.html",
         "get_list": get_tag_list
     },
     "user": {
-        "model_name": "Posts",
+        "items_name": "Posts",
         "template": "auth/user_in_list.html",
         "get_list": get_user_list
     }
@@ -50,7 +52,7 @@ def list_items(item):
     # num page
     page_number = request.args.get("page")
 
-    page_name = items_list[item]["model_name"]
+    page_name = items_list[item]["items_name"]
 
     # SEARCH
 
@@ -77,29 +79,31 @@ def list_items(item):
                            )
 
 
+# DELETE
+
 items_delete = {
     "post": {
-        'model_name': "Posts",
+        'items_name': "Posts",
         'function': delete_post_by_id
     },
     "tag": {
-        'model_name': "Tags",
+        'items_name': "Tags",
         'function': delete_tag_by_id
     },
     "comment": {
-        "model_name": 'Comments',
+        "items_name": 'Comments',
         'function': delete_comment_by_id
     },
     "image": {
-        "model_name": 'Images',
+        "items_name": 'Images',
         'function': delete_image_by_id
     },
     "role": {
-        "model_name": 'Roles',
+        "items_name": 'Roles',
         'function': delete_role_by_id
     },
     "user": {
-        "model_name": 'Users',
+        "items_name": 'Users',
         'function': delete_user_by_id
     }
 }
@@ -118,3 +122,39 @@ def delete_item(item_type, item_id):
         return render_template("wrong.html", request=request, errors=errors)
 
     return redirect(request.referrer)
+
+
+items_create = {
+    "post": {
+        "item_name": "Posts",
+        "function": create_post,
+        "get_form": create_post_form,
+        "template": "/posts/create_post.html"
+    },
+    "tag": {
+        "item_name": "Tags",
+        "function": create_tag,
+        "get_form": create_tag_form,
+        "template": "/posts/create_tag.html"
+    }
+}
+
+
+@app.route('/create/<item_type>/', methods=['GET', 'POST'])
+@login_required
+def create_item(item_type):
+    errors = []
+
+    form = items_create[item_type]["get_form"]()
+
+    if request.method == "POST":
+        errors = items_create[item_type]["function"](errors, form)
+
+        if not errors:
+            return redirect(url_for("create_item", item_type=item_type))
+
+    return render_template(items_create[item_type]["template"],
+                           form=form,
+                           access=access,
+                           errors=errors
+                           )
