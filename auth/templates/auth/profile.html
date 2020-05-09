@@ -17,14 +17,14 @@
 
     </ul>
 
-    {% if current_user.has_role("admin") %}
+    {% if access(["admin"]) %}
         <form action="{{ url_for("auth.read_user",user_id=user.id ) }}" method="post">
             {{ form.roles }}
             <button type="submit">Save</button>
         </form>
     {% endif %}
 
-    {% if current_user.has_role("moder") %}
+    {% if access(["moder"]) %}
         <form action="{{ url_for("auth.ban_user",user_id=user.id ) }}" method="post">
             <button type="submit">
 

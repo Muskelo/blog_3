@@ -163,7 +163,7 @@ def delete_tag_by_id(errors, tag_id):
         errors.append("Don't find tag by id{}".format(tag_id))
         return errors
 
-    errors = delete_image(errors, tag)
+    errors = delete_tag(errors, tag)
 
     return errors
 
@@ -173,15 +173,12 @@ def delete_tag(errors, tag):
         errors.append("no access")
         return errors
 
-    errors = delete_post_body(errors, tag)
+    errors = delete_tag_body(errors, tag)
 
     return errors
 
 
 def delete_tag_body(errors, tag):
-    errors = delete_comments_after_post(errors, tag)
-    errors = delete_image_after_post(errors, tag)
-
     try:
         db.session.delete(tag)
         db.session.commit()

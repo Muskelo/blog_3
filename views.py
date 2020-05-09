@@ -3,13 +3,17 @@ from flask_login import current_user
 from flask_security import login_required
 
 from app import app
+
 from auth.delete import delete_role_by_id, delete_user_by_id
-from get_list import get_post_list, get_tag_list, get_user_list
 from posts.delete import delete_comment_by_id, \
     delete_image_by_id, \
     delete_post_by_id, \
     delete_tag_by_id
-from utils import get_num_near_pages
+
+from auth.get_list import get_user_list
+from posts.get_list import get_post_list, get_tag_list
+
+from utils import get_num_near_pages,access
 
 
 @app.route('/')
@@ -20,17 +24,17 @@ def index():
 items_list = {
     "post": {
         "model_name": "Posts",
-        "template": "post_in_list.html",
+        "template": "posts/post_in_list.html",
         "get_list": get_post_list
     },
     "tag": {
         "model_name": "Tags",
-        "template": "tag_in_list.html",
+        "template": "posts/tag_in_list.html",
         "get_list": get_tag_list
     },
     "user": {
         "model_name": "Posts",
-        "template": "user_in_list.html",
+        "template": "auth/user_in_list.html",
         "get_list": get_user_list
     }
 }
@@ -63,7 +67,7 @@ def list_items(item):
     pages_near = get_num_near_pages(page_number, page.pages, 4)
 
     return render_template("list.html",
-                           current_user=current_user,
+                           access=access,
                            page=page,
                            page_name=page_name,
                            errors=errors,
@@ -101,7 +105,7 @@ items_delete = {
 }
 
 
-@app.route('/delete/<item_type>/<item_id>/', methods=["POST", "GET"])
+@app.route('/delete/<item_type>/<item_id>/', methods=["POST"])
 @login_required
 def delete_item(item_type, item_id):
     errors = []
@@ -113,4 +117,4 @@ def delete_item(item_type, item_id):
     if errors:
         return render_template("wrong.html", request=request, errors=errors)
 
-    return "{} deleted".format(item_type)
+    return redirect(request.referrer)

@@ -5,6 +5,8 @@ from auth.forms import SelectRoleForm
 from db import db
 from models import User, Role
 
+from utils import access
+
 auth = Blueprint('auth', __name__,
                  template_folder='templates',
                  static_folder='static')
@@ -29,10 +31,11 @@ def read_user(user_id):
     if request.method == "POST":
         user.roles = []
 
-        if not current_user.has_role("admin"):
+        if not access(["admin"]):
             errors.append("no access")
 
             return render_template("auth/profile.html",
+                                   access=access,
                                    user=user,
                                    form=form
                                    )
@@ -51,6 +54,7 @@ def read_user(user_id):
         form.roles.data.append(str(role.id))
 
     return render_template("auth/profile.html",
+                           access=access,
                            user=user,
                            form=form
                            )
@@ -66,10 +70,10 @@ def ban_user(user_id):
     user = User.query.filter(User.id == user_id).first()
 
     if not user:
-        abort(404)
+        errors.append("Not find user by id {}".format(user_id))
 
     # access
-    if not current_user.has_role("moder"):
+    if not access(["moder"]):
         errors.append("no access")
 
     if not errors:

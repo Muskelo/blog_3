@@ -1,0 +1,15 @@
+<div class="pages__item-name">
+    <a href="{{ url_for("list_items",item="post",tag=item.name) }}">{{ item.name }}</a>
+</div>
+
+<div class="pages__item-form">
+    {% if access(["moder"]) %}
+        <form action="{{ url_for("posts.edit_tag", tag_id=item.id) }}">
+            <button>Edit post</button>
+        </form>
+
+        <form action="{{ url_for("delete_item",item_type="tag",item_id=item.id) }}" method="post">
+            <button type="submit">delete post</button>
+        </form>
+    {% endif %}
+</div>
