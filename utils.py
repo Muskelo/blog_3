@@ -32,13 +32,18 @@ def redirect_url(default='index'):
            url_for(default)
 
 
-def access(roles: list = [], author=None):
+def access(roles: list = [], author=None, auth=False):
     """Access
 
     :param roles:
+    :param auth: true if user is authenticated
     :param author: if need check author
     :return:true if one among there true
     """
+
+    if auth and current_user.is_authenticated:
+        return True
+
     if author and author == current_user:
         return True
 
