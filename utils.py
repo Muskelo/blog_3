@@ -47,3 +47,15 @@ def access(roles: list = [], author=None):
             return True
 
     return False
+
+
+def access_bigger(user1, user2):
+    list_roles_access = ["God", "admin", "moder"]
+
+    for role in list_roles_access:
+        if user1.has_role(role) and user2.has_role(role):
+            return False
+        if user1.has_role(role) and not user2.has_role(role):
+            return True
+
+    return False
