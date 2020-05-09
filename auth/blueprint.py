@@ -1,10 +1,10 @@
-from flask import Blueprint, abort, render_template, request,redirect
-from flask_security import current_user, login_required
+from flask import Blueprint, abort, render_template, request, redirect
+from flask_security import login_required
 
+from auth.ban import ban_user_by_id
 from auth.forms import SelectRoleForm
 from db import db
 from models import User, Role
-
 from utils import access
 
 auth = Blueprint('auth', __name__,
@@ -67,21 +67,9 @@ def ban_user(user_id):
 
     # search
 
-    user = User.query.filter(User.id == user_id).first()
+    errors = ban_user_by_id(errors, user_id)
 
-    if not user:
-        errors.append("Not find user by id {}".format(user_id))
-
-    # access
-    if not access(["moder"]):
-        errors.append("no access")
-
-    if not errors:
-        if user.active == 0:
-            user.active = 1
-        else:
-            user.active = 0
-
-        db.session.commit()
+    if errors:
+        return render_template("wrong.html", request=request, errors=errors)
 
     return redirect(request.referrer)
