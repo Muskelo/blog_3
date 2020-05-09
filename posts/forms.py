@@ -24,6 +24,8 @@ def create_post_form():
     return form
 
 
+# TAG
+
 class CreateTagForm(FlaskForm):
     name = StringField(u"Name")
 
@@ -33,6 +35,8 @@ def create_tag_form():
 
     return form
 
+
+# COMMENT
 
 class CreateCommentForm(FlaskForm):
     title = StringField(u"Title", validators=[validators.length(min=4)])

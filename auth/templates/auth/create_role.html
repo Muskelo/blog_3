@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}{% endblock %}
+
+
+{% block main %}
+
+<form action="{{ url_for("create_item",item_type="role") }}" method="post">
+    <p>Role's name</p>
+    {{ form.name }}
+    <p>Role's description</p>
+    {{ form.description }}
+    
+    <button type="submit">Create Role</button>
+</form>
+
+{% if not errors %}
+    <p>all ok</p>
+{% endif %}
+
+{% for error in errors %}
+    <p>{{ error }}</p>
+{% endfor %}
+
+{% endblock %}

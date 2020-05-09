@@ -4,13 +4,16 @@ from flask_security import login_required
 
 from app import app
 from auth.delete import delete_role_by_id, delete_user_by_id
-from auth.get_list import get_user_list
-from posts.create import create_post,create_tag
+from auth.get_list import get_user_list,get_role_list
+from auth.forms import create_role_form
+from auth.create import create_role
+
+from posts.create import create_post, create_tag
 from posts.delete import delete_comment_by_id, \
     delete_image_by_id, \
     delete_post_by_id, \
     delete_tag_by_id
-from posts.forms import create_post_form,create_tag_form
+from posts.forms import create_post_form, create_tag_form
 from posts.get_list import get_post_list, get_tag_list
 from utils import get_num_near_pages, access
 
@@ -38,6 +41,11 @@ items_list = {
         "items_name": "Posts",
         "template": "auth/user_in_list.html",
         "get_list": get_user_list
+    },
+    "role": {
+        "items_name": "Roles",
+        "template": "auth/role_in_list.html",
+        "get_list": get_role_list
     }
 }
 
@@ -136,6 +144,12 @@ items_create = {
         "function": create_tag,
         "get_form": create_tag_form,
         "template": "/posts/create_tag.html"
+    },
+    "role": {
+        "item_name": "Roles",
+        "function": create_role,
+        "get_form": create_role_form,
+        "template": "/auth/create_role.html"
     }
 }
 
