@@ -52,36 +52,3 @@ def save_image(form, post, errors):
         i += 1
 
     return errors
-
-
-def delete_image(image_id, current_user, errors):
-    """Delete image
-
-    :param image_id:
-    :param current_user:
-    :param errors:
-    :return:errors
-    """
-
-    image = Image.query.filter(Image.id == image_id).first()
-
-    # access
-    post_parent = image.post_parent
-    author = post_parent.author
-
-    if image and (current_user == author or current_user.has_role("moder")):
-        # delete
-        try:
-            os.remove(image.address)
-        except:
-            errors.append("error")
-
-        # commit
-        if not errors:
-            db.session.delete(image)
-            db.session.commit()
-
-    else:
-        errors.append("can't find")
-
-    return [errors, image.post_id]

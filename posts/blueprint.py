@@ -5,7 +5,8 @@ from flask_security import login_required
 from db import db
 from models import Tag, Post, Image, Comment
 from posts.forms import CreatePostForm, CreateTagForm, CreateCommentForm, SelectMultipleField
-from posts.utils import save_image, delete_image
+from posts.utils import save_image
+from utils import access
 
 posts = Blueprint('posts', __name__,
                   template_folder='templates',
@@ -112,7 +113,7 @@ def edit_post(post_id):
     post = Post.query.filter(Post.id == post_id).first()
 
     # search result and access
-    if post and (post.author == current_user or current_user.has_role("admin")):
+    if post and access(["moder"], author=post.author):
 
         # CREATE FORM
 
@@ -177,7 +178,7 @@ def edit_tag(tag_id):
     tag = Tag.query.filter(Tag.id == tag_id).first()
 
     # search result and access
-    if tag and current_user.has_role("moder"):
+    if tag and access(roles=["moder"]):
         # CREATE FORM
 
         form = CreateTagForm()
@@ -202,98 +203,6 @@ def edit_tag(tag_id):
                            current_user=current_user,
                            errors=errors
                            )
-
-
-@posts.route('delete_image/<image_id>/', methods=['POST'])
-@login_required
-def delete_img(image_id):
-    errors = []
-
-    # search
-    errors, post_id = delete_image(image_id, current_user, errors)
-
-    if not errors:
-        return redirect(url_for("posts.edit_post", post_id=post_id))
-
-    return render_template("wrong.html", request=request)
-
-
-@posts.route('delete_post/<post_id>/', methods=['POST'])
-@login_required
-def delete_post(post_id):
-    errors = []
-
-    #  search
-    post = Post.query.filter(Post.id == post_id).first()
-
-    #  access
-    if post and (current_user == post.author or
-                 current_user.has_role("moder")):
-
-        for image in post.images:
-            delete_image(image.id, current_user, errors)
-
-        #  commit
-        db.session.delete(post)
-        db.session.commit()
-
-        return redirect(request.referrer)
-
-    return render_template("wrong.html", request=request)
-
-
-@posts.route('delete_tag/<tag_id>/', methods=['POST'])
-@login_required
-def delete_tag(tag_id):
-    errors = []
-
-    #  search
-    tag = Tag.query.filter(Tag.id == tag_id).first()
-
-    # access
-    if tag and (current_user.has_role("moder")):
-
-        # COMMIT
-
-        if not errors:
-            db.session.delete(tag)
-            db.session.commit()
-
-            return redirect(request.referrer)
-
-    return render_template("wrong.html", request=request)
-
-
-@posts.route('delete_comment/<comment_id>/', methods=["GET", 'POST'])
-@login_required
-def delete_comment(comment_id):
-    errors = []
-
-    # search
-    comment = Comment.query.filter(Comment.id == comment_id).first()
-
-    # VALIDATE
-
-    if not comment:
-        errors.append("Don't find")
-
-    # access
-    elif not (current_user == comment.author
-              or current_user.has_role("moder")):
-
-        errors.append("Not access")
-
-    # COMMIT
-
-    if not errors:
-        db.session.delete(comment)
-        db.session.commit()
-
-        if request.method == "GET":
-            return "deleted"
-        return redirect(request.referrer)
-
-    return render_template("wrong.html", request=request, errors=errors)
 
 
 @posts.route('/<post_id>/', methods=["GET", "POST"])
