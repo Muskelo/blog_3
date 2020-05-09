@@ -29,7 +29,6 @@ def read_user(user_id):
     #  EDIT ROLES
 
     if request.method == "POST":
-        user.roles = []
 
         if not access(["admin"]):
             errors.append("no access")
@@ -39,6 +38,7 @@ def read_user(user_id):
                                    user=user,
                                    form=form
                                    )
+        user.roles = []
 
         for role in form.roles.data:
             user.roles.append(Role.query.filter(Role.id == int(role)).first())

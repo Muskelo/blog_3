@@ -1,7 +1,11 @@
+from flask_security import current_user
+
 from db import db
 from models import User, Role
-from utils import access
+from utils import access, access_bigger
 
+
+# USER
 
 def delete_user_by_id(errors, user_id):
     user = User.query.filter(User.id == user_id).first()
@@ -16,6 +20,10 @@ def delete_user_by_id(errors, user_id):
 
 
 def delete_user(errors, user):
+    if not access_bigger(current_user, user):
+        errors.append("Your access must be higher than have subject")
+        return errors
+
     if not access(["admin"], user):
         errors.append("no access")
         return errors
@@ -24,6 +32,8 @@ def delete_user(errors, user):
 
     return errors
 
+
+# ROLE
 
 def delete_user_body(errors, user):
     try:
