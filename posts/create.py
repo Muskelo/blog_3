@@ -1,7 +1,7 @@
 from flask_security import current_user
 
 from db import db
-from models import Post, Tag
+from models import Post, Tag, Comment
 from utils import access, save_image
 
 
@@ -91,5 +91,35 @@ def create_tag_body(errors, form):
         db.session.commit()
     except:
         errors.append("Can't save in db tag id{}".format(tag.id))
+
+    return errors
+
+
+# COMMENT
+
+def create_comment(errors, form, args):
+    if not access(auth=True):
+        errors.append("no access")
+
+        return errors
+
+    errors = create_comment_body(errors, form, args)
+
+    return errors
+
+
+def create_comment_body(errors, form, args):
+    comment = Comment()
+
+    comment.title = form.title.data
+    comment.text = form.text.data
+    comment.post_id = args["post_id"]
+    comment.user_id = args["author_id"]
+
+    try:
+        db.session.add(comment)
+        db.session.commit()
+    except:
+        errors.append("Can't save in db comment")
 
     return errors
