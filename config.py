@@ -18,6 +18,7 @@ class Configuration(object):
 
     # Upload images
     UPLOAD_FOLDER = 'posts/static/posts/img'
+    UPLOAD_FOLDER_AUTH = 'auth/static/auth/img'
     ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
 
     # Flask-mail

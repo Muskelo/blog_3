@@ -1,7 +1,7 @@
 import os
 
 from db import db
-from models import Comment, Image, Post, Tag
+from models import Comment, Image, Post, Tag, Icon, User
 from utils import access
 
 
@@ -186,3 +186,6 @@ def delete_tag_body(errors, tag):
         errors.append("can't delete tag from db,id{}".format(tag.id))
 
     return errors
+
+
+

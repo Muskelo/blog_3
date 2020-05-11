@@ -1,7 +1,9 @@
+import os
+
 from flask_security import current_user
 
 from db import db
-from models import User, Role
+from models import User, Role, Icon
 from utils import access, access_bigger
 
 
@@ -73,5 +75,56 @@ def delete_role_body(errors, role):
         db.session.commit()
     except:
         errors.append("Can't delete role from db,role id{}".format(role.id))
+
+    return errors
+
+
+# ICON
+def delete_icon_by_user(errors, user_id):
+    icon = Icon.query.filter(Icon.profile_id == user_id).first()
+
+    if icon:
+        errors = delete_icon(errors, icon)
+
+    return errors
+
+
+def delete_icon_by_id(errors, icon_id):
+    icon = Icon.query.filter(Icon.id == icon_id).first()
+
+    if not icon:
+        errors.append("Don't find icon by id{}".format(icon_id))
+        return errors
+
+    errors = delete_icon(errors, icon)
+
+    return errors
+
+
+def delete_icon(errors, icon):
+    if not access(author=icon.user):
+        errors.append("no access")
+        return errors
+
+    errors = delete_icon_body(errors, icon)
+
+    return errors
+
+
+def delete_icon_body(errors, icon):
+    # delete
+    try:
+        os.remove(icon.address)
+    except:
+        errors.append("can't remove from disk,icon id={}".format(icon.id))
+
+        return errors
+
+    # commit
+    try:
+        db.session.delete(icon)
+        db.session.commit()
+    except:
+        errors.append("can't remove from db,image id={}".format(icon.id))
 
     return errors

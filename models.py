@@ -54,6 +54,19 @@ class Image(db.Model):
         return self.id + "_" + self.post_id
 
 
+class Icon(db.Model):
+    __tablename__ = "icon"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    address = db.Column(db.String(140))
+    profile_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    def __init__(self, *args, **kwargs):
+        super(Icon, self).__init__(*args, **kwargs)
+
+    def __repr__(self):
+        return self.id + "_" + self.post_id
+
+
 class Comment(db.Model):
     __tablename__ = "comment"
 
@@ -85,5 +98,6 @@ class User(db.Model, UserMixin):
     confirmed_at = db.Column(db.DateTime())
     posts = db.relationship("Post", backref="author")
     comments = db.relationship("Comment", backref="author")
+    icon = db.relationship("Icon", backref="user")
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))

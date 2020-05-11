@@ -2,10 +2,11 @@ from flask import Blueprint, abort, render_template, request, redirect
 from flask_security import login_required
 
 from auth.ban import ban_user_by_id
-from auth.forms import SelectRoleForm
+from auth.forms import SelectRoleForm, upload_icon_form
+from .delete import delete_icon_by_user
 from db import db
 from models import User, Role
-from utils import access
+from utils import access, save_icon_to_profile
 
 auth = Blueprint('auth', __name__,
                  template_folder='templates',
@@ -25,6 +26,7 @@ def read_user(user_id):
     # FORM
 
     form = SelectRoleForm()
+    form_2 = upload_icon_form()
 
     #  EDIT ROLES
 
@@ -56,7 +58,8 @@ def read_user(user_id):
     return render_template("auth/profile.html",
                            access=access,
                            user=user,
-                           form=form
+                           form=form,
+                           form_2=form_2
                            )
 
 
@@ -71,5 +74,23 @@ def ban_user(user_id):
 
     if errors:
         return render_template("wrong.html", request=request, errors=errors)
+
+    return redirect(request.referrer)
+
+
+@auth.route('icon_user/<user_id>', methods=['POST'])
+@login_required
+def icon_user(user_id):
+    errors = []
+
+    form_2 = upload_icon_form()
+
+    delete_icon_by_user(errors,user_id=user_id)
+
+    args = {
+        "profile_id": user_id
+    }
+
+    errors = save_icon_to_profile(errors, form_2, args)
 
     return redirect(request.referrer)

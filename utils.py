@@ -5,7 +5,7 @@ from flask_security import current_user
 
 from app import app
 from db import db
-from models import Image
+from models import Image, Icon
 
 
 def get_num_near_pages(page, all_pages, max_way_to_neighbor):
@@ -125,7 +125,66 @@ def save_image_body(errors, file, args):
                                  str(args["post_id"]),
                                  file.filename.split(".")[1]
                                  )
-    image.address = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    image.address = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+
+    try:
+        file.save(image.address)
+    except:
+        errors.append("Can't save on disk")
+        return errors
+
+    try:
+        db.session.commit()
+    except:
+        errors.append("Can't commit changes in db")
+
+    return errors
+
+
+def save_icon_to_profile(errors, form, args):
+    """Save icon
+
+    Save image from form and return errors
+
+    :param form:
+    :param args:
+    :param errors:
+    :return: errors
+    """
+
+    file = form.icon.data  # all images
+
+    # saving
+
+    if file.filename == "":
+        return errors
+
+    if not (file and allowed_file(file.filename)):
+        errors.append("img {} hav a invalid format".format(file.filename))
+
+        return errors
+
+    errors = (save_icon_body(errors, file, args))
+
+    return errors
+
+
+def save_icon_body(errors, file, args):
+    image = Icon(profile_id=args["profile_id"])
+
+    try:
+        db.session.add(image)
+        db.session.flush()
+    except:
+        errors.append("Can't save image's info on db")
+
+        return errors
+
+    filename = "{}_{}.{}".format(str(image.id),
+                                 str(args["profile_id"]),
+                                 file.filename.split(".")[1]
+                                 )
+    image.address = os.path.join(app.config["UPLOAD_FOLDER_AUTH"], filename)
 
     try:
         file.save(image.address)

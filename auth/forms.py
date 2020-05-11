@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
+from wtforms import SelectMultipleField, FileField
 from wtforms import StringField
-from wtforms import SelectMultipleField
 
 from models import Role
 
@@ -17,5 +17,15 @@ class CreateRoleForm(FlaskForm):
 
 def create_role_form():
     form = CreateRoleForm()
+
+    return form
+
+
+class UploadIconForm(FlaskForm):
+    icon = FileField(u"Icon")
+
+
+def upload_icon_form():
+    form = UploadIconForm()
 
     return form
