@@ -3,11 +3,10 @@ from flask_login import current_user
 from flask_security import login_required
 
 from app import app
-from auth.delete import delete_role_by_id, delete_user_by_id
-from auth.get_list import get_user_list,get_role_list
-from auth.forms import create_role_form
 from auth.create import create_role
-
+from auth.delete import delete_role_by_id, delete_user_by_id
+from auth.forms import create_role_form
+from auth.get_list import get_user_list, get_role_list
 from posts.create import create_post, create_tag
 from posts.delete import delete_comment_by_id, \
     delete_image_by_id, \
@@ -131,6 +130,8 @@ def delete_item(item_type, item_id):
 
     return redirect(request.referrer)
 
+
+# CREATE
 
 items_create = {
     "post": {
