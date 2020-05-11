@@ -2,8 +2,7 @@ from flask_security import current_user
 
 from db import db
 from models import Post, Tag
-from posts.utils import save_image
-from utils import access
+from utils import access, save_image
 
 
 # POST

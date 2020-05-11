@@ -41,3 +41,9 @@ def create_tag_form():
 class CreateCommentForm(FlaskForm):
     title = StringField(u"Title", validators=[validators.length(min=4)])
     text = TextAreaField(u"Text")
+
+
+def create_comment_form():
+    form = CreateCommentForm()
+
+    return form

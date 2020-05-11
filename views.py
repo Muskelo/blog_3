@@ -1,5 +1,4 @@
 from flask import request, render_template, redirect, url_for
-from flask_login import current_user
 from flask_security import login_required
 
 from app import app
@@ -7,11 +6,13 @@ from auth.create import create_role
 from auth.delete import delete_role_by_id, delete_user_by_id
 from auth.forms import create_role_form
 from auth.get_list import get_user_list, get_role_list
+from auth.edit import edit_role_by_id
 from posts.create import create_post, create_tag
 from posts.delete import delete_comment_by_id, \
     delete_image_by_id, \
     delete_post_by_id, \
     delete_tag_by_id
+from posts.edit import edit_tag_by_id, edit_post_by_id
 from posts.forms import create_post_form, create_tag_form
 from posts.get_list import get_post_list, get_tag_list
 from utils import get_num_near_pages, access
@@ -19,7 +20,7 @@ from utils import get_num_near_pages, access
 
 @app.route('/')
 def index():
-    return render_template("index.html", current_user=current_user)
+    return render_template("index.html", access=access)
 
 
 #  LIST
@@ -172,4 +173,46 @@ def create_item(item_type):
                            form=form,
                            access=access,
                            errors=errors
+                           )
+
+
+# EDIT
+
+items_edit = {
+    "tag": {
+        "item_name": "Tags",
+        "function": edit_tag_by_id,
+        "template": "/posts/edit_tag.html"
+    },
+    "post": {
+        "item_name": "Posts",
+        "function": edit_post_by_id,
+        "template": "/posts/edit_post.html"
+    },
+    "role": {
+        "item_name": "Posts",
+        "function": edit_role_by_id,
+        "template": "/auth/edit_role.html"
+    }
+}
+
+
+@app.route('/edit_item/<item_type>/<item_id>/', methods=["GET", "POST"])
+@login_required
+def edit_item(item_type, item_id):
+    errors = []
+
+    errors, args = items_edit[item_type]["function"](errors, item_id)
+
+    if errors:
+        return render_template("wrong.html",
+                               errors=errors,
+                               request=request,
+                               access=access)
+
+    return render_template(items_edit[item_type]["template"],
+                           args=args,
+                           access=access,
+                           errors=errors,
+                           item_id=item_id
                            )
