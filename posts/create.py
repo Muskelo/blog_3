@@ -2,13 +2,13 @@ from flask_security import current_user
 
 from db import db
 from models import Post, Tag, Comment
-from utils import access, save_image
+from utils import access, save_image_to_post
 
 
 # POST
 
 def create_post(errors, form):
-    if not current_user.is_authenticated():
+    if not current_user.is_authenticated:
         errors.append("no access")
 
         return errors
@@ -44,8 +44,10 @@ def create_post_body(errors, form):
         return errors
 
     # SAVE IMAGES
-
-    errors = save_image(form, new_post, errors)
+    args = {
+        "post_id": new_post.id
+    }
+    errors = save_image_to_post(errors, form, args)
 
     if errors:
         return errors

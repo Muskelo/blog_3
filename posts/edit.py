@@ -2,7 +2,7 @@ from flask import request
 
 from db import db
 from models import Tag, Image, Post, Comment
-from utils import access, save_image
+from utils import access, save_image_to_post
 from .forms import create_tag_form, create_post_form, create_comment_form
 
 
@@ -90,7 +90,10 @@ def edit_post_body(errors, post, args={}):
 
         # SAVE IMAGES
 
-        errors = save_image(form, post, errors)
+        args = {
+            "post_id": post.id
+        }
+        errors = save_image_to_post(errors, form, args)
 
         # COMMIT
         if not errors:
