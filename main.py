@@ -1,6 +1,5 @@
 import db  # noqa: F401
 import mail  # noqa: F401
-import posts.forms  # noqa: F401
 import security  # noqa: F401
 import views  # noqa: F401
 from app import app
