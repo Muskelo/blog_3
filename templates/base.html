@@ -14,18 +14,25 @@
             <li><a href="{{ url_for("list_items",item = "post") }}">POSTS</a></li>
             <li><a href="{{ url_for("list_items",item = "tag") }}">TAGS</a></li>
             <li><a href="{{ url_for("list_items",item = "user") }}">USERS</a></li>
+            <li><a href="{{ url_for("list_items",item = "role") }}">ROLES</a></li>
 
+            {% if access(["God"]) %}
+                <li><a href="{{ url_for("create_item",item_type = "role") }}">CREATE ROLE</a></li>
+            {% endif %}
 
+            {% if access(["moder"]) %}
+                <li><a href="{{ url_for("create_item",item_type = "tag") }}">CREATE TAG</a></li>
+            {% endif %}
 
-            {% if not current_user.is_authenticated %}
+            {% if not access(auth=True) %}
 
                 <li><a href="{{ url_for("security.login") }}">LOGIN</a></li>
                 <li><a href="{{ url_for("security.register") }}">REGISTRATION</a></li>
             {% endif %}
 
-            {% if current_user.is_authenticated %}
+            {% if access(auth=True) %}
+                <li><a href="{{ url_for("create_item",item_type="post") }}">CREATE POST </a></li>
                 <li><a href="{{ url_for("list_items",item = "post",author = current_user.email) }}">MY POST</a></li>
-                <li><a href="{{ url_for("posts.create_posts") }}">CREATE POST </a></li>
                 <li><a href="{{ url_for("security.logout") }}">LOGOUT</a></li>
             {% endif %}
         </ul>

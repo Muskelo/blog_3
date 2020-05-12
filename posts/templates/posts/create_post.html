@@ -3,7 +3,7 @@
 
 
 {% block main %}
-    <form action="{{ url_for("posts.create_posts") }}" method="post" enctype="multipart/form-data">
+    <form action="{{ url_for("create_item",item_type="post") }}" method="post" enctype="multipart/form-data">
 
         <p>Title</p>
         {{ form.title }}

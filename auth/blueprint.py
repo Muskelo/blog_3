@@ -1,9 +1,12 @@
-from flask import Blueprint, abort, render_template, request,redirect
-from flask_security import current_user, login_required
+from flask import Blueprint, abort, render_template, request, redirect
+from flask_security import login_required
 
-from auth.forms import SelectRoleForm
+from auth.ban import ban_user_by_id
+from auth.forms import SelectRoleForm, upload_icon_form
 from db import db
 from models import User, Role
+from utils import access, save_icon_to_profile
+from .delete import delete_icon_by_user
 
 auth = Blueprint('auth', __name__,
                  template_folder='templates',
@@ -23,17 +26,21 @@ def read_user(user_id):
     # FORM
 
     form = SelectRoleForm()
+    form_2 = upload_icon_form()
+
+    #  EDIT ROLES
 
     if request.method == "POST":
-        user.roles = []
 
-        if not current_user.has_role("admin"):
+        if not access(["admin"]):
             errors.append("no access")
 
             return render_template("auth/profile.html",
+                                   access=access,
                                    user=user,
                                    form=form
                                    )
+        user.roles = []
 
         for role in form.roles.data:
             user.roles.append(Role.query.filter(Role.id == int(role)).first())
@@ -41,7 +48,7 @@ def read_user(user_id):
         if not errors:
             db.session.commit()
 
-    # put role in form
+    # PUT ROLE IN FORM
 
     form.roles.data = []
 
@@ -49,8 +56,10 @@ def read_user(user_id):
         form.roles.data.append(str(role.id))
 
     return render_template("auth/profile.html",
+                           access=access,
                            user=user,
-                           form=form
+                           form=form,
+                           form_2=form_2
                            )
 
 
@@ -61,21 +70,27 @@ def ban_user(user_id):
 
     # search
 
-    user = User.query.filter(User.id == user_id).first()
+    errors = ban_user_by_id(errors, user_id)
 
-    if not user:
-        abort(404)
+    if errors:
+        return render_template("wrong.html", request=request, errors=errors)
 
-    # access
-    if not current_user.has_role("moder"):
-        errors.append("no access")
+    return redirect(request.referrer)
 
-    if not errors:
-        if user.active == 0:
-            user.active = 1
-        else:
-            user.active = 0
 
-        db.session.commit()
+@auth.route('icon_user/<user_id>', methods=['POST'])
+@login_required
+def icon_user(user_id):
+    errors = []
+
+    form_2 = upload_icon_form()
+
+    delete_icon_by_user(errors, user_id=user_id)
+
+    args = {
+        "user_id": user_id
+    }
+
+    errors = save_icon_to_profile(errors, form_2, args)
 
     return redirect(request.referrer)

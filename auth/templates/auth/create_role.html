@@ -4,11 +4,13 @@
 
 {% block main %}
 
-<form action="{{ url_for("create_item",item_type="tag") }}" method="post">
-    <p>Tag's name</p>
+<form action="{{ url_for("create_item",item_type="role") }}" method="post">
+    <p>Role's name</p>
     {{ form.name }}
+    <p>Role's description</p>
+    {{ form.description }}
     
-    <button type="submit">Create Tag</button>
+    <button type="submit">Create Role</button>
 </form>
 
 {% if not errors %}

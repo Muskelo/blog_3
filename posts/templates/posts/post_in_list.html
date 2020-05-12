@@ -1,0 +1,26 @@
+<div class="pages__item-title">
+    <a href="{{ url_for("posts.read_post",post_id=item.id) }}">{{ item.title }}</a>
+</div>
+<div class="pages__item-author">
+    <a href="#">{{ item.author.email }}</a>
+</div>
+
+<div class="pages__item-form">
+
+    {% if access(author=item.author) %}
+        <form action="{{ url_for("edit_item",item_type="post",item_id=item.id) }}">
+            <button>Edit post</button>
+        </form>
+    {% endif %}
+
+    {% if access(["moder"],item.author) %}
+        <form action="{{ url_for("delete_item",item_type="post",item_id=item.id) }}" method="post">
+            <button type="submit">delete post</button>
+        </form>
+    {% endif %}
+
+</div>
+
+<div class="pages__item_data">
+    {{ item.created }}
+</div>
