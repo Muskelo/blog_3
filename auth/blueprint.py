@@ -3,10 +3,10 @@ from flask_security import login_required
 
 from auth.ban import ban_user_by_id
 from auth.forms import SelectRoleForm, upload_icon_form
-from .delete import delete_icon_by_user
 from db import db
 from models import User, Role
 from utils import access, save_icon_to_profile
+from .delete import delete_icon_by_user
 
 auth = Blueprint('auth', __name__,
                  template_folder='templates',
@@ -85,10 +85,10 @@ def icon_user(user_id):
 
     form_2 = upload_icon_form()
 
-    delete_icon_by_user(errors,user_id=user_id)
+    delete_icon_by_user(errors, user_id=user_id)
 
     args = {
-        "profile_id": user_id
+        "user_id": user_id
     }
 
     errors = save_icon_to_profile(errors, form_2, args)

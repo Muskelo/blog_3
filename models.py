@@ -58,7 +58,7 @@ class Icon(db.Model):
     __tablename__ = "icon"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     address = db.Column(db.String(140))
-    profile_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __init__(self, *args, **kwargs):
         super(Icon, self).__init__(*args, **kwargs)

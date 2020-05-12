@@ -81,7 +81,7 @@ def delete_role_body(errors, role):
 
 # ICON
 def delete_icon_by_user(errors, user_id):
-    icon = Icon.query.filter(Icon.profile_id == user_id).first()
+    icon = Icon.query.filter(Icon.user_id == user_id).first()
 
     if icon:
         errors = delete_icon(errors, icon)

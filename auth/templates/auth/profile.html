@@ -4,14 +4,16 @@
 
 {% block main %}
     {% if access(author = user) %}
-
         <form action="{{ url_for("auth.icon_user",user_id=user.id) }}" method="post" enctype="multipart/form-data">
-            {{ form_2.icon}}
+            {{ form_2.icon }}
             <button type="submit">Icon</button>
         </form>
     {% endif %}
 
-    <img src="{{ "/"+user.icon[0].address }}" alt="">
+    {% for image in user.icon %}
+        <img src="{{ "/"+image.address }}" alt="">
+    {% endfor %}
+
     <h1>{{ user.email }}</h1>
     <a href="{{ url_for("list_items",item="post",author=user.email) }}">{{ "{}'s post".format(user.email) }}</a>
 
