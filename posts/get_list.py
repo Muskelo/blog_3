@@ -15,20 +15,21 @@ def get_post_list(errors):
     list__items = Post.query.order_by(Post.created.desc())
 
     if search:
+        log += "&search=" + search
         list__items = list__items.filter(Post.title.contains(search) |
                                          Post.text.contains(search))
 
-        log += "&search=" + search
-
     if search_by_tag:
-        tag = Tag.query.filter(Tag.name == search_by_tag).first()
+        log += "&tag=" + search_by_tag
+        tags = search_by_tag.split(" ")
 
-        if tag:
-            list__items = list__items.filter(Post.tags.contains(tag))
+        for tag in tags:
+            tag_ = Tag.query.filter(Tag.name == tag).first()
 
-            log += "&tag=" + tag.name
-        else:
-            errors.append("not such tag")
+            if tag_:
+                list__items = list__items.filter(Post.tags.contains(tag_))
+            else:
+                errors.append("Can'f find tag {}".format(tag))
 
     if author:
         author_ = User.query.filter(User.email == author).first()
