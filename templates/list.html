@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}{% endblock %}
+{% block title %}{{ page_name }}{% endblock %}
 
 
 {% block main %}
@@ -34,8 +34,6 @@
             {% endfor %}
 
         </ul>
-
-
         <ul class="result">
 
             {% for item in page.items %}
