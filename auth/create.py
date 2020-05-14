@@ -4,7 +4,7 @@ from utils import access
 
 
 def create_role(errors, form):
-    if not access(["moder"]):
+    if not access(["God"]):
         errors.append("no access")
 
         return errors

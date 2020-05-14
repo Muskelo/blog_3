@@ -32,7 +32,7 @@ def read_user(user_id):
 
     if request.method == "POST":
 
-        if not access(["admin"]):
+        if not access(["God"]):
             errors.append("no access")
 
             return render_template("auth/profile.html",
