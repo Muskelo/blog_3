@@ -1,3 +1,27 @@
 .main form>*{
     display: block;
 }
+.comments{
+    margin-top:50px;
+    border-top:1px solid #3f3f60;
+}
+.comments li{
+    margin: 10px 0;
+    border-top:1px solid #4f4f70;
+}
+.comments button{
+    margin: auto;
+}
+.comments h4{
+    margin: 20px 0;
+    font-size: 20px;
+}
+.post{
+    padding: 0 10%;
+}
+
+@media screen and (min-width:768px) {
+    .post{
+    padding: 0 25%;
+}
+}

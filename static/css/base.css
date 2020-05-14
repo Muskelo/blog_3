@@ -1,0 +1,342 @@
+@import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css);
+
+/* http://meyerweb.com/eric/tools/css/reset/
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video, input, button, body, a {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: inherit;
+    font-family: inherit;
+    font-weight: inherit;
+    color: inherit;
+    text-decoration: none;
+    vertical-align: baseline;
+    box-sizing: border-box;
+    background: none;
+    display: block;
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+    display: block;
+}
+
+body {
+    line-height: 1;
+}
+
+ol, ul {
+    list-style: none;
+}
+
+blockquote, q {
+    quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content: '';
+    content: none;
+}
+
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/*css Reset end*/
+
+
+/*css Fonts start*/
+
+@font-face {
+    font-family: 'Montserrat';
+    src: local('Montserrat Bold'), local('Montserrat-Bold'),
+    url('../fonts/montserrat/montserratbold.woff2') format('woff2'),
+    url('../fonts/montserrat/montserratbold.woff') format('woff'),
+    url('../fonts/montserrat/montserratbold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Open Sans';
+    src: local('Open Sans'), local('OpenSans'),
+    url(' ../fonts/opensans/opensans.woff2') format('woff2'),
+    url('../fonts/opensans/opensans.woff') format('woff'),
+    url('../fonts/opensans/opensans.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+/*CSS FONTS END*/
+
+body {
+    font-family: Montserrat, sans-serif;
+    font-weight: 700;
+    position: relative;
+    min-height: 100vh;
+}
+
+
+/*HEADER START*/
+
+.header {
+    width: 100%;
+    border-bottom: white solid 5px;
+    font-size: 16px;
+    font-family: Montserrat, sans-serif;
+    color: white;
+
+    display: grid;
+    grid-template-rows: 45px 40px 10px auto 10px;
+    grid-template-columns: 15px auto 15px;
+}
+
+/*Nav*/
+.nav {
+    height: 100vh;
+    width: 100%;
+    background-color: white;
+
+    position: fixed;
+    top: -100vh;
+    z-index: 107;
+
+    color: #3f3f60;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    transition-duration: 500ms;
+}
+
+.nav ul {
+    z-index: 110;
+    text-align: center;
+}
+
+.nav ul li {
+    padding: 10px 0 0 0;
+    border: transparent 5px solid;
+}
+
+.nav__button {
+    height: 60px;
+    width: 60px;
+    border-radius: 30px;
+    background-color: white;
+    position: absolute;
+    bottom: -40px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    transition-duration: 500ms;
+
+}
+
+.nav__button i {
+    color: #3f3f60;
+    font-size: 20px;
+    transition-duration: 500ms;
+}
+
+/*Search*/
+.search {
+    grid-area: 2/2/3/3;
+    display: flex;
+    justify-content: center;
+}
+
+.search form {
+    height: 40px;
+    width: 100%;
+    max-width: 500px;
+    position: relative;
+    color: #3f3f60;
+}
+
+.search input {
+    height: inherit;
+    width: 100%;
+    background-color: white;
+    border-radius: 20px;
+    text-indent: 40px;
+}
+
+.search button {
+    height: inherit;
+    width: 40px;
+    border-radius: 20px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #3f3f60;
+}
+
+/*Title*/
+.title {
+    grid-area: 4/2/5/3;
+    font-size: 48px;
+    text-align: center;
+}
+
+@media screen and (min-width: 1024px) {
+    .header {
+        grid-template-rows: 20px 40px 150px auto 100px 40px;
+    }
+
+    .title {
+        font-size: 64px;
+    }
+
+    .search {
+        grid-area: 2/2/3/3;
+    }
+
+    .title {
+        grid-area: 4/2/5/3;
+    }
+
+    .nav {
+        grid-area: 6/2/7/3;
+
+        height: auto;
+        background-color: transparent;
+
+        position: relative;
+        top: 0;
+    }
+
+    .nav ul {
+        display: flex;
+        justify-content: space-evenly;
+    }
+
+    .nav ul li {
+        height: 40px;
+        color: white;
+        padding: 0 10px;
+    }
+
+    .nav ul li:hover {
+        border-bottom: white solid 5px;
+    }
+
+    .nav ul li.nav__li_selected {
+        border-bottom: white solid 5px;
+    }
+
+    .nav__button {
+        display: none;
+    }
+}
+
+/*HEADER END*/
+
+
+
+.main {
+    text-align: center;
+    padding-bottom: 50px;
+}
+
+.main form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    text-align: center;
+}
+
+.main input,.main button {
+    background-color: #f2eeeb;
+    border: #3f3f60 1px solid;
+    padding: 5px 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+}
+.main img{
+    margin: auto;
+}
+.main h3{
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+.main h4{
+    font-size: 20px;
+    margin-bottom: 14px;
+}
+
+
+/*FOOTER START*/
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 20px 2fr 3fr 20px;
+    grid-template-rows: 10px 1fr 1fr 10px;
+
+    border-top: solid white 5px;
+
+    color: white;
+}
+
+.footer__title {
+    grid-area: 2/2/4/3;
+}
+
+.footer__mail {
+    grid-area: 2/3/3/4;
+}
+
+.footer__media {
+    grid-area: 3/3/4/4;
+
+    display: flex;
+    justify-content: flex-start;
+}
+
+.footer__media a {
+    padding: 0 15px;
+}
+
+@media screen and (min-width: 768px) {
+    .footer {
+        display: flex;
+        padding: 15px 40px;
+    }
+
+    .footer > * {
+        margin: 0 20px;
+    }
+
+    .footer__media {
+        justify-items: flex-end;
+    }
+}
+
+

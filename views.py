@@ -83,7 +83,8 @@ def list_items(item):
                            errors=errors,
                            pages_near=pages_near,
                            log=log,
-                           item_template=item_template
+                           item_template=item_template,
+                           request=request
                            )
 
 
@@ -214,3 +215,7 @@ def edit_item(item_type, item_id):
                            errors=errors,
                            item_id=item_id
                            )
+
+
+
+

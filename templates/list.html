@@ -1,12 +1,20 @@
 {% extends "base.html" %}
-{% block title %}{% endblock %}
-
+{% block title %}{{ page_name }}{% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for("static",filename="css/list.css") }}">
+{% endblock %}
 
 {% block main %}
     <div class="selectPage">
         <ul>
             <li>
-                <a href="./?page={{ page.prev_num }}{{ log }}">
+                <a
+                {% if page.has_prev%}
+                     href="./?page={{ page.prev_num }}{{ log }}"
+                {% else %}
+                    href="./?page={{ page.page }}{{ log }}"
+                {% endif %}
+                >
                     <i class="fa fa-angle-left"></i>
                     <i class="fa fa-angle-up"></i>
                 </a>
@@ -19,24 +27,29 @@
             {% endfor %}
 
             <li>
-                <a href="./?page={{ page.next_num }}{{ log }}">
+                <a
+                {% if page.has_next%}
+                     href="./?page={{ page.next_num }}{{ log }}"
+                {% else %}
+                    href="./?page={{ page.page }}{{ log }}"
+                {% endif %}
+                >
                     <i class="fa fa-angle-right"></i>
                     <i class="fa fa-angle-down"></i>
                 </a>
             </li>
         </ul>
     </div>
+
     <div class="page">
-        <ul class="errors">
+        <ul class="page__errors">
 
             {% for error in errors %}
                 <li>{{ error }}</li>
             {% endfor %}
 
         </ul>
-
-
-        <ul class="result">
+        <ul class="page__result">
 
             {% for item in page.items %}
                 <li>
@@ -50,29 +63,7 @@
 
         </ul>
     </div>
-    <div class="selectPage">
-        <ul>
-            <li>
-                <a href="./?page={{ page.prev_num }}{{ log }}">
-                    <i class="fa fa-angle-left"></i>
-                    <i class="fa fa-angle-up"></i>
-                </a>
-            </li>
 
-            {% for num in range(pages_near[0],pages_near[1]) %}
-                <li class="selectPage__numPage">
-                    <a href="./?page={{ num }}{{ log }}">{{ num }}</a>
-                </li>
-            {% endfor %}
-
-            <li>
-                <a href="./?page={{ page.next_num }}{{ log }}">
-                    <i class="fa fa-angle-right"></i>
-                    <i class="fa fa-angle-down"></i>
-                </a>
-            </li>
-        </ul>
-    </div>
 
 {% endblock %}
 

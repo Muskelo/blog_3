@@ -1,6 +1,7 @@
 <div class="pages__item-email">
-    <a href="{{ url_for("list_items",item="user",roles=item.name) }}">{{ item.name }}</a>
-    {{ item.description }}
+    <h4>Role: <a href="{{ url_for("list_items",item="user",roles=item.name) }}">{{ item.name }}</a></h4>
+    <br>
+    Description: {{ item.description }}
 </div>
 {% if access(["God"]) %}
 
