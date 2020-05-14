@@ -6,9 +6,6 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    {% block head %}
-    {% endblock %}
-
 
     <link rel="stylesheet" href="{{ url_for("static",filename="css/base.css") }}">
     <style>
@@ -22,6 +19,9 @@
             background-size: cover;
         }
     </style>
+
+    {% block head %}
+    {% endblock %}
 
 </head>
 <body>
@@ -58,7 +58,8 @@
             </li>
 
             {% if access(["God"]) %}
-                <li{% if request.path ==url_for("create_item",item_type = "role") %} class="nav__li_selected" {% endif %}>
+                <li{% if request.path ==url_for("create_item",item_type = "role") %}
+                    class="nav__li_selected" {% endif %}>
                     <a href="{{ url_for("create_item",item_type = "role") }}">
                         CREATE ROLE
                     </a>
@@ -66,7 +67,8 @@
             {% endif %}
 
             {% if access(["moder"]) %}
-                <li{% if request.path ==url_for("create_item",item_type = "tag") %} class="nav__li_selected" {% endif %}>
+                <li{% if request.path ==url_for("create_item",item_type = "tag") %}
+                    class="nav__li_selected" {% endif %}>
                     <a href="{{ url_for("create_item",item_type = "tag") }}">
                         CREATE TAG
                     </a>
@@ -93,9 +95,16 @@
                         CREATE POST
                     </a>
                 </li>
-                <li{% if request.path ==url_for("list_items",item = "post",author = current_user.email) %} class="nav__li_selected" {% endif %}>
+                <li{% if request.path ==url_for("list_items",item = "post",author = current_user.email) %}
+                    class="nav__li_selected" {% endif %}>
                     <a href="{{ url_for("list_items",item = "post",author = current_user.email) }}">
                         MY POST
+                    </a>
+                </li>
+                <li{% if request.path ==url_for("auth.read_user",user_id = current_user.id) %}
+                    class="nav__li_selected" {% endif %}>
+                    <a href="{{ url_for("auth.read_user",user_id = current_user.id) }}">
+                        MY PROFILE
                     </a>
                 </li>
                 <li{% if request.path ==url_for("security.logout") %} class="nav__li_selected" {% endif %}>
@@ -113,8 +122,8 @@
     </div>
 
     <div class="search">
-        <form action="{{ url_for("index") }}" method="get">
-            <input type="text" value="{{ request.args.get("search","") }}">
+        <form action="{{ url_for("list_items",item ="post") }}" method="get">
+            <input type="text" name="search" value="{{ request.args.get("search","") }}">
             <button type="submit"><i class="fa fa-search "></i></button>
         </form>
     </div>
@@ -148,6 +157,16 @@
 
 
     $(document).ready(function () {
+        const scrollOn = () => {
+            document.body.style.overflow = "";
+        };
+
+// Отключает скролл на странице
+        const scrollOff = () => {
+            document.body.style.overflow = "hidden";
+        };
+
+
         $(".nav__button").click(function () {
 
             if ($(".nav").css("top") !== "0px") {
@@ -161,6 +180,7 @@
                     .css("flex-direction", "column-reverse")
                     .css("background-color", "#3f3f60")
                     .css("color", "#ffffff");
+                scrollOff();
 
             } else {
                 $(".nav").css("top", "-100vh");
@@ -173,6 +193,7 @@
                     .css("flex-direction", "column")
                     .css("background-color", "#ffffff")
                     .css("color", "#3f3f60");
+                scrollOn();
             }
         })
     })

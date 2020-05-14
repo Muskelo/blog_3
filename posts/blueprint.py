@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, abort
+from flask import Blueprint, render_template, request, abort,redirect
 from flask_security import current_user
 
 from models import Post, Image, Comment
@@ -25,11 +25,16 @@ def read_post(post_id):
 
     # EDIT COMMENT
     edit = request.args.get("edit")
-
+    print(request.data)
     if edit:
         errors, args = edit_comment_by_id(errors, edit)
 
+        if errors:
+            return render_template("wrong.html", errors=errors,
+                                   request=request, access=access)
         form = args["form"]
+
+
 
     # CREATE COMMENT
     else:
@@ -45,6 +50,8 @@ def read_post(post_id):
 
         if request.method == "POST":
             errors = create_comment(errors, form, args)
+            if not errors:
+                return redirect(request.url)
 
     # PRINT ERRORS
     if errors:
